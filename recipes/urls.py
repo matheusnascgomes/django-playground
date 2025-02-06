@@ -1,10 +1,19 @@
-from django.urls import path
+from django.urls import path, include
+
+from rest_framework.routers import SimpleRouter
 
 from .views import api, site
 
 app_name = 'recipes'
 
-urlpatterns = [
+recipes_api_router = SimpleRouter(trailing_slash=False)
+recipes_api_router.register('v2/recipes', api.RecipesViewSet, basename='recipes')
+
+tags_api_router = SimpleRouter(trailing_slash=False)
+tags_api_router.register('v2/recipes/tags', api.TagsViewSet, basename='tags')
+
+
+mvc_routes = [
     ### MVC VIEWS
     path(
         '',
@@ -46,25 +55,12 @@ urlpatterns = [
         site.theory,
         name='theory',
     ),
-    ### REST API
-    path(
-        'v2/recipes',
-        api.RecipesAPI.as_view(),
-        name='recipes'
-    ),
-    path(
-        'v2/recipes/<int:pk>',
-        api.RecipesItemAPI.as_view(),
-        name='recipes'
-    ),
-    path(
-        'v2/recipes/tags',
-        api.TagsAPI.as_view(),
-        name='tag_api_detail'
-    ),
-    path(
-        'v2/recipes/tags/<int:pk>',
-        api.TagsItemAPI.as_view(),
-        name='tag_api_detail'
-    )
 ]
+
+rest_api_routes = [
+    path('', include(recipes_api_router.urls)),
+    path('', include(tags_api_router.urls))
+]
+
+urlpatterns = mvc_routes + rest_api_routes
+

@@ -9,7 +9,7 @@ class TagSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'slug', 'url']
 
     url = serializers.HyperlinkedIdentityField(
-        view_name='recipes:tag_api_detail',
+        view_name='recipes:tags-detail',
         lookup_field='pk'
     )
         
@@ -43,7 +43,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     )
 
     url = serializers.HyperlinkedIdentityField(
-        view_name='recipes:recipes',
+        view_name='recipes:recipes-detail',
         lookup_field='pk'
     )
 
