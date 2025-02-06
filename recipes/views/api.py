@@ -3,56 +3,68 @@ from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.status import *
+from rest_framework.views import APIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
 from ..models import Recipe
 from ..serializers import RecipeSerializer, TagSerializer
 from tag.models import Tag
 
+class RecipesAPI(ListCreateAPIView):
+    """
+    API view to retrieve list of recipes or create a new recipe.
 
-@api_view(http_method_names=['GET', 'POST'])
-def recipe_api_list(request):
-    if (request.method == 'GET'):
-        recipes = Recipe.objects.get_published()[:10]
-        serializer = RecipeSerializer(instance=recipes, many=True, context={'request': request})
-        return Response(serializer.data)
-    elif (request.method == 'POST'):
-        serializer = RecipeSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(status=HTTP_201_CREATED)
+    - GET: Returns a list of all recipes.
+    - POST: Creates a new recipe.
 
-@api_view(http_method_names=['GET', 'PATCH', 'PUT', 'DELETE'])
-def recipe_api_detail(request, pk):
-    recipe = get_object_or_404(
-        Recipe.objects.get_published(),
-        pk=pk
-    )
+    Attributes:
+        queryset: A queryset containing all Recipe objects.
+        serializer_class: The serializer class used to validate and serialize the Recipe objects.
+    """
+    queryset = Recipe.objects.all()
+    serializer_class = RecipeSerializer
 
-    if (request.method == 'GET'):
-        serializer = RecipeSerializer(instance=recipe, context={'request': request})
-        return Response(serializer.data)
-    elif (request.method == 'DELETE'):
-        recipe.delete()
-        return Response(status=HTTP_204_NO_CONTENT)
-    elif (request.method == 'PATCH'):
-        serializer = RecipeSerializer(instance=recipe, context={'request': request}, data=request.data,partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(status=HTTP_200_OK, data=serializer.data)
+class RecipesItemAPI(RetrieveUpdateDestroyAPIView):
+    """
+    API view to retrieve, update, or delete a recipe instance.
 
+    Inherits from:
+        RetrieveUpdateDestroyAPIView: A view that provides default implementations for retrieving, updating, and deleting a model instance.
 
+    Attributes:
+        queryset (QuerySet): The queryset that should be used for returning objects from this view.
+        serializer_class (Serializer): The serializer class that should be used for validating and deserializing input, and for serializing output.
+    """
+    queryset = Recipe.objects.all()
+    serializer_class = RecipeSerializer
 
-@api_view()
-def tag_api_detail(request, pk):
-    tag = get_object_or_404(
-        Tag.objects.all(),
-        pk=pk
-    )
+class TagsAPI(ListCreateAPIView):
+    """
+    API view to retrieve a list of tags or create a new tag.
 
-    serializer = TagSerializer(
-        instance=tag,
-        many=False,
-        context={'request': request}
-    )
+    This view supports the following actions:
+    - GET: Retrieve a list of all tags.
+    - POST: Create a new tag.
 
-    return Response(serializer.data)
+    Attributes:
+        queryset (QuerySet): The queryset that retrieves all Tag objects.
+        serializer_class (Serializer): The serializer class used to validate and deserialize input, and serialize output.
+    """
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+
+class TagsItemAPI(RetrieveUpdateDestroyAPIView):
+    """
+    API view to retrieve, update, or delete a Tag instance.
+
+    This view provides the following actions:
+    - Retrieve a single Tag instance by its ID.
+    - Update an existing Tag instance.
+    - Delete a Tag instance.
+
+    Attributes:
+        queryset (QuerySet): The queryset that retrieves all Tag instances.
+        serializer_class (Serializer): The serializer class used to validate and deserialize input, and serialize output.
+    """
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer

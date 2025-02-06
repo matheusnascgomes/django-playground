@@ -49,17 +49,22 @@ urlpatterns = [
     ### REST API
     path(
         'v2/recipes',
-        api.recipe_api_list,
+        api.RecipesAPI.as_view(),
         name='recipes'
     ),
     path(
         'v2/recipes/<int:pk>',
-        api.recipe_api_detail,
+        api.RecipesItemAPI.as_view(),
         name='recipes'
     ),
     path(
-        'v2/recipes/tag/<int:pk>',
-        api.tag_api_detail,
+        'v2/recipes/tags',
+        api.TagsAPI.as_view(),
+        name='tag_api_detail'
+    ),
+    path(
+        'v2/recipes/tags/<int:pk>',
+        api.TagsItemAPI.as_view(),
         name='tag_api_detail'
     )
 ]

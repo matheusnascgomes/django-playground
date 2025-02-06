@@ -23,7 +23,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             'tag_objects',
             'preparation_time', 'preparation_time_unit', 'servings',
             'servings_unit',
-            'preparation_steps', 'cover'
+            'preparation_steps', 'cover', 'url'
         ]
         
     public = serializers.BooleanField(
@@ -40,6 +40,11 @@ class RecipeSerializer(serializers.ModelSerializer):
     tag_objects = TagSerializer(
         many=True, source='tags',
         read_only=True,
+    )
+
+    url = serializers.HyperlinkedIdentityField(
+        view_name='recipes:recipes',
+        lookup_field='pk'
     )
 
     def get_preparation(self, recipe):
