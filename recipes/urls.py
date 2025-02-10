@@ -6,12 +6,6 @@ from .views import api, site
 
 app_name = 'recipes'
 
-recipes_api_router = SimpleRouter(trailing_slash=False)
-recipes_api_router.register('v2/recipes', api.RecipesViewSet, basename='recipes')
-
-tags_api_router = SimpleRouter(trailing_slash=False)
-tags_api_router.register('v2/recipes/tags', api.TagsViewSet, basename='tags')
-
 
 mvc_routes = [
     ### MVC VIEWS
@@ -56,6 +50,13 @@ mvc_routes = [
         name='theory',
     ),
 ]
+
+recipes_api_router = SimpleRouter()
+tags_api_router = SimpleRouter()
+
+recipes_api_router.register('v2/recipes', api.RecipesViewSet, basename='recipes')
+tags_api_router.register('v2/recipes/tags', api.TagsViewSet, basename='tags')
+
 
 rest_api_routes = [
     path('', include(recipes_api_router.urls)),
