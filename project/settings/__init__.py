@@ -12,4 +12,4 @@ from .templates import *
 
 from .debug_toolbar import *  # isort:skip
 
-from .rtf import *
+from .drf import *
